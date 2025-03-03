@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase ユーザー登録</title>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
+    <script>
+        // Firebase 設定
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        function register() {
+            let userId = prompt("ユーザーIDを入力:");
+            let email = prompt("メールアドレスを入力:");
+            let password = prompt("パスワードを入力:");
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    let user = userCredential.user;
+                    db.collection("users").doc(userId).set({
+                        email: email,
+                        uid: user.uid
+                    }).then(() => {
+                        alert("登録成功！ ユーザーID: " + userId);
+                    });
+                })
+                .catch((error) => {
+                    alert("エラー: " + error.message);
+                });
+        }
+    </script>
+</head>
+<body>
+    <button onclick="register()">ユーザー登録</button>
+</body>
+</html>
